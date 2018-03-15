@@ -24,9 +24,9 @@ This processor help us to convert wkb to wkb in order to integrate data to other
 
 ## Requirements
 
-Apache nifi 1.5.0 only tested using apache nifi 1.5.0.
-Maven 3+
-Java JDK 8+.
+- Apache nifi 1.5.0 only tested using apache nifi 1.5.0.
+- Maven 3+
+- Java JDK 8+
 
 ## Getting Started
 
