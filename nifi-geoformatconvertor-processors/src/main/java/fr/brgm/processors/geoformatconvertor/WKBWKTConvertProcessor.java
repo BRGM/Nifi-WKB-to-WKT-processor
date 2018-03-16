@@ -20,9 +20,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
-import org.apache.commons.io.IOUtils;
 import org.apache.nifi.annotation.behavior.SideEffectFree;
-import org.apache.nifi.annotation.behavior.SupportsBatching;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnScheduled;
@@ -31,16 +29,15 @@ import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.processor.*;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.InputStreamCallback;
-import org.apache.nifi.processor.io.OutputStreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 
-
-import javax.xml.bind.DatatypeConverter;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Tags({"WKB","WKT","JSON"})
 @CapabilityDescription("Transform WKB format to WKT on a content. Results is set to output jsonpath provided")
@@ -121,27 +118,24 @@ public class WKBWKTConvertProcessor extends AbstractProcessor {
                 public void process(InputStream in) throws IOException {
 
                     getLogger().debug("Processing flow file content : converting to json");
-                    String json = IOUtils.toString(in);
+                    String json = new BufferedReader(new InputStreamReader(in)).lines()
+                            .parallel().collect(Collectors.joining("\n"));
                     getLogger().debug("Processing flow file content : convert to json done");
                     getLogger().debug("Processing flow file content : Reading value "+context.getProperty(WKBIN_PROPERTY).getValue());
-
                     String result = JsonPath.read(json,context.getProperty(WKBIN_PROPERTY).getValue() );
                     getLogger().debug("Processing flow file content : Reading done, result : "+result);
                     value.set(result);
-
                 }
             });
 
             String results= value.get();
             if(results != null && !results.isEmpty()){
-
                 try {
                     getLogger().debug("Processing flow file content : Converting value : "+results);
                     byte[] back1 = Base64.getDecoder().decode(results);
                     getLogger().debug("Processing flow file content : decoded base 64 : "+back1);
-                    byte[] aux = WKBReader.hexToBytes(DatatypeConverter.printHexBinary(back1));
-                    getLogger().debug("Processing flow file content : converted to hex  : "+aux);
-                    Geometry geom = new WKBReader().read(aux);
+                    WKBReader reader = new WKBReader();
+                    Geometry geom = reader.read(back1);
                     getLogger().debug("Processing flow file content : getting geometry  : "+geom);
                     String wktString = geom.toText();
                     getLogger().debug("Processing flow file content : getting WKT  : "+wktString);
@@ -151,20 +145,6 @@ public class WKBWKTConvertProcessor extends AbstractProcessor {
                     throw new ProcessException(e);
                 }
             }
-
-
-            // To write the results back out to flow file
-          /*  final FlowFile output = session.create(flowFile);
-
-            flowFile = session.write(flowFile, new OutputStreamCallback() {
-
-                @Override
-                public void process(OutputStream out) throws IOException {
-                    out.write(output);
-                }
-            });*/
-
-
             getLogger().info("Processing flow file content : Transferring flow file to success");
             session.transfer(flowFile, SUCCESS);
 
