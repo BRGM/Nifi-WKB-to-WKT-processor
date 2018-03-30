@@ -19,7 +19,7 @@
     <parent>
         <groupId>fr.brgm</groupId>
         <artifactId>nifi-geoformatconvertor-bundle</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>nifi-geoformatconvertor-processors</artifactId>
@@ -58,11 +58,6 @@
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
         </dependency>
 
 

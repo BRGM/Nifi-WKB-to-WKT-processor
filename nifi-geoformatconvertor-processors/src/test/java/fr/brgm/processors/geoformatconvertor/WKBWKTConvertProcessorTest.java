@@ -17,14 +17,11 @@
 package fr.brgm.processors.geoformatconvertor;
 
 import com.vividsolutions.jts.io.ParseException;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.apache.nifi.util.MockFlowFile;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
 import org.junit.Before;
 import org.junit.Test;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -58,14 +55,13 @@ public class WKBWKTConvertProcessorTest {
         List<MockFlowFile> results = testRunner.getFlowFilesForRelationship(WKBWKTConvertProcessor.SUCCESS);
         assertTrue("1 converted", results.size() == 1);
         MockFlowFile result = results.get(0);
-        String resultValue = new String(testRunner.getContentAsByteArray(result));
 
-        System.out.println("convertion: " + IOUtils.toString(testRunner.getContentAsByteArray(result)));
+
 
         // Test attributes and content
         result.assertAttributeEquals("location_wgs84_WKT", "POINT (3.54316653506605 50.3921323020023)");
 
-        System.out.println("\n Ending");
+
 
     }
 
@@ -83,14 +79,13 @@ public class WKBWKTConvertProcessorTest {
         List<MockFlowFile> results = testRunner.getFlowFilesForRelationship(WKBWKTConvertProcessor.SUCCESS);
         assertTrue("1 converted", results.size() == 1);
         MockFlowFile result = results.get(0);
-        String resultValue = new String(testRunner.getContentAsByteArray(result));
 
-        System.out.println("convertion: " + IOUtils.toString(testRunner.getContentAsByteArray(result)));
+
 
         // Test attributes and content
         result.assertAttributeEquals("location_wgs84_WKT", "POINT (3.54316653506605 50.3921323020023)");
 
-        System.out.println("\n Ending");
+
 
     }
 
