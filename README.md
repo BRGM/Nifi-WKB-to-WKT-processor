@@ -1,4 +1,4 @@
-# Nifi-WKT-to-WKB-processor
+# Nifi-WKB-to-WKT-processor
 A simple processor to transform WKB field in flowfile content to WKT in flowfile attribute.
 
 Many thanks to Phillip Grenier for example : 
